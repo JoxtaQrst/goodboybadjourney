@@ -1,0 +1,1 @@
+"D:\PICO-8\pico8.exe" -run game.p8
