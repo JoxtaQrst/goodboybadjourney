@@ -18,9 +18,11 @@ collaboration:
 # add as many "url+licence+comment" entries as necessary
 # (or remove it altogether if you haven't used any external code)
 code:
-  - comment:
+  - comment: platformer tutorial ( nerdy teachers )
     url:
     licence:
+
+  - comment : chat gpt
 
 
 # add as many "url+licence+comment" entries as necessary

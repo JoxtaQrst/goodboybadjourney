@@ -1,11 +1,17 @@
-
 -- define player object
 
--- define player object
+-- tile flags
+wall_flag = 0
+tile_flag = 1
+
 player = {
+    life = 3,
+    max_life = 3,
     x = 56,  -- starting x position
     y = 56,  -- starting y position
     speed = 1,  -- movement speed
+    w = 16,
+    h = 16,  -- width and height of player sprite
 
     -- Sprite settings
     sprite_normal = {1,3},       -- idle state when not moving (visible)
@@ -27,21 +33,29 @@ function update_player()
 
     -- Check direction input {left = 0, right = 1, up = 2, down = 3}
     if (btn(0)) then 
-        player.x = player.x - player.speed 
+        if not collide_map(player, "left", wall_flag) then
+            player.x = player.x - player.speed 
+        end
         moving = true 
         player.dir = "left"
     end
     if (btn(1)) then 
-        player.x = player.x + player.speed 
+        if not collide_map(player, "right", wall_flag) then
+            player.x = player.x + player.speed 
+        end
         moving = true 
         player.dir = "right"
     end
     if (btn(2)) then 
-        player.y = player.y - player.speed 
+        if not collide_map(player, "up", wall_flag) then
+            player.y = player.y - player.speed 
+        end
         moving = true 
     end
     if (btn(3)) then 
-        player.y = player.y + player.speed 
+        if not collide_map(player, "down", wall_flag) then
+            player.y = player.y + player.speed 
+        end
         moving = true 
     end
 
