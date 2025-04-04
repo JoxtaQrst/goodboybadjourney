@@ -6,7 +6,7 @@ function draw_ui()
     local padding = 0
     rectfill(0, 0, 128, 8, 0) -- clear the top bar
     for i = 1, player.max_life do 
-        local heart_spr = ( i <= health) and 131 or 132
+        local heart_spr = ( i <= player.life) and 131 or 132
         spr(heart_spr, 8*i + 2 + padding,0,1,1)
         padding += 2 -- add padding between hearts
     end 

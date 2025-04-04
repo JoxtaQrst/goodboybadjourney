@@ -15,8 +15,8 @@ function init_traps()
         cycle = 120, -- total frames for full cycle ( inactive + active )
         active_duration = 60, -- frames active
         active = false, -- is the trap active?
-        inactive_sprite = 108, -- sprite for inactive trap
-        active_sprite = 110, -- sprite for active trap
+        inactive_sprite = 169, -- sprite for inactive trap
+        active_sprite = 171, -- sprite for active trap
 
     })
     -- Dart trap example (16x16 base, scales by 2)
@@ -60,7 +60,7 @@ function init_traps()
     })
     add(traps, {
         number = 5,
-        x = 50,
+        x = 30,
         y = 50,
         type = "dart",
         timer = 0,
@@ -156,7 +156,7 @@ function draw_traps()
             end
             -- draw sprite at trap.x,trapy with 16x16 size
             spr(spr_num,trap.x,trap.y,2,2,false,false)
-            printh("trap "..trap.number.." active: "..tostr(trap.active))
+            --printh("trap "..trap.number.." active: "..tostr(trap.active))
         end
     end
 end
@@ -169,12 +169,12 @@ end
 
 function choose_dart_sprite(trap)
     if trap.direction == "left" then
-        return 102
+        return 163
     elseif trap.direction == "right" then
-        return 104
+        return 165
     elseif trap.direction == "up" then
-        return 100
+        return 161
     elseif trap.direction == "down" then
-        return 106
+        return 167
     end
 end
