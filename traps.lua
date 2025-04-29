@@ -4,87 +4,90 @@ dart_projectiles = {}
 dart_speed = 2
 
 function init_traps()
-    traps = {}
-    add(traps,
-    {
-        number = 1,
-        x=80,
-        y=80,
-        type="spike",
-        timer = 0 ,
-        cycle = 120, -- total frames for full cycle ( inactive + active )
-        active_duration = 60, -- frames active
-        active = false, -- is the trap active?
-        inactive_sprite = 169, -- sprite for inactive trap
-        active_sprite = 171, -- sprite for active trap
+    -- iterate through existing traps and print their details
+    for trap in all(traps) do
+        if trap.type == "spike" then
+            printh("Spike trap at ("..trap.x..","..trap.y..") active: "..tostr(trap.active))
+        elseif trap.type == "dart" then
+            printh("Dart trap at ("..trap.x..","..trap.y..") direction: "..trap.direction.." active: "..tostr(trap.active))
+        end
+    end
 
-    })
-    -- Dart trap example (16x16 base, scales by 2)
-    add(traps, {
-        number = 2,
-        x = 12,
-        y = 0,
-        type = "dart",
-        timer = 0,
-        cycle = 120,
-        active_duration = 60,
-        active = false,
-        -- The trap's base sprite will depend on the shooting direction:
-        -- up: 100, left: 102, right: 104, down: 106.
-        direction = "down",
-        fired = false  -- flag to ensure the trap fires only once per active phase
-    })
-    add(traps, {
-        number = 3,
-        x = 0,
-        y = 60,
-        type = "dart",
-        timer = 0,
-        cycle = 120,
-        active_duration = 60,
-        active = false,
-        direction = "up",
-        fired = false
-    })
-    add(traps, {
-        number = 4,
-        x = 50,
-        y = 80,
-        type = "dart",
-        timer = 0,
-        cycle = 120,
-        active_duration = 60,
-        active = false,
-        direction = "right",
-        fired = false
-    })
-    add(traps, {
-        number = 5,
-        x = 30,
-        y = 50,
-        type = "dart",
-        timer = 0,
-        cycle = 120,
-        active_duration = 60,
-        active = false,
-        direction = "left",
-        fired = false
-    })
+    -- Add a spike trap
+    -- add(traps,
+    -- {
+    --     number = 1,
+    --     x=80,
+    --     y=80,
+    --     type="spike",
+    --     timer = 0 ,
+    --     cycle = 120, -- total frames for full cycle ( inactive + active )
+    --     active_duration = 60, -- frames active
+    --     active = false, -- is the trap active?
+    --     inactive_sprite = 169, -- sprite for inactive trap
+    --     active_sprite = 171, -- sprite for active trap
+    -- })
+
+    -- Add a dart trap
+    -- add(traps, {
+    --     number = 2,
+    --     x = 12,
+    --     y = 0,
+    --     type = "dart",
+    --     timer = 0,
+    --     cycle = 120, -- total frames for full cycle (inactive + active)
+    --     active_duration = 60, -- frames active
+    --     active = false, -- is the trap active?
+    --     direction = "down", -- direction the dart will fire
+    --     fired = false  -- flag to ensure the trap fires only once per active phase
+    -- })
 end
 
+function make_trap(o)
+    assert(o.type=="spike" or o.type=="dart","make_trap: bad type")
+    local t = {
+        type            = o.type,
+        x               = o.x or 0,
+        y               = o.y or 0,
+        timer           = o.type=="spike"
+                        and flr(rnd(o.cycle or 120))
+                        or (o.timer or 0),
+        cycle           = o.cycle or 120,
+        active_duration = o.active_duration or 60,
+        active          = false,
+    }
+    if o.type=="spike" then
+        -- defaults for spike
+        t.inactive_sprite = o.inactive_sprite or 169
+        t.active_sprite   = o.active_sprite   or 171
+    
+    else -- dart
+        -- defaults for dart trap (the turret base)
+        t.direction = o.direction or "down"
+        t.fired     = false
+    end
+    printh("Adding trap "..t.type.." at ("..t.x..","..t.y.."), active: "..tostr(t.active))
+    add(traps,t)
+    return t
+end
 -- update trap states   ( spikes and darts)
 function update_traps()
     for trap in all(traps) do 
-        trap.timer = trap.timer + 1
-        if trap.timer >= trap.cycle then
-            trap.timer = 0
-            if trap.type == "dart" then
-                trap.fired = false -- reset firing flag for next cycle
-            end
-        end 
+        -- if trap.timer is nil, default it to 0, then add 1
+        trap.timer = (trap.timer or 0) + 1
 
-        -- activ if within the first active_duration frames of the cycle
-        trap.active = trap.timer <trap.active_duration
+        -- likewise guard trap.cycle
+        local cycle = trap.cycle or 120
+        if trap.timer >= cycle then
+        trap.timer = 0
+        if trap.type == "dart" then
+            trap.fired = false
+        end
+        end
+
+        -- guard active_duration too
+        local adur = trap.active_duration or 60
+        trap.active = trap.timer < adur
 
         if trap.type == "dart" then
             if trap.active and not trap.fired then

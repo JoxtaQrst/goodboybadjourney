@@ -95,6 +95,15 @@ function update_player()
     if player.invincibility_timer > 0 then
         player.invincibility_timer = player.invincibility_timer - 1
     end
+
+    -- clamp into the world‐bounds
+    local max_x = world_width*8 - player.w
+    local max_y = world_height*8 - player.h
+
+    -- in pico-8 mid(a,b,c) = clamp(b, a, c)
+    player.x = mid(0, player.x, max_x)
+    player.y = mid(0, player.y, max_y)
+
 end
 
 function draw_player()
@@ -150,8 +159,13 @@ function update_camera()
 end
 
 -- Rectangle collision helper
-function rect_collide(ax, ay, aw, ah, bx, by, bw, bh)
-    return not (ax + aw < bx or ax > bx + bw or ay + ah < by or ay > by + bh)
+function rect_collide_margin(ax,ay,aw,ah,bx,by,bw,bh,margin)
+    return not (
+    ax+aw   < bx+margin or
+    ax      > bx+bw-margin or
+    ay+ah   < by+margin or
+    ay      > by+bh-margin
+    )
 end
 
 -- Reduce player life when damage is taken
@@ -174,7 +188,7 @@ function check_trap_collisions()
     -- Check collision with spike traps (16x16)
     for trap in all(traps) do
         if trap.type == "spike" and trap.active then
-            if rect_collide(player.x, player.y, player.w, player.h, trap.x, trap.y, 16, 16) then
+            if rect_collide_margin(player.x, player.y, player.w, player.h, trap.x, trap.y, 16, 16,5) then
                 damage_player()
             end
         end
@@ -182,7 +196,7 @@ function check_trap_collisions()
 
     -- Check collision with dart projectiles (8x8)
     for dart in all(dart_projectiles) do
-        if rect_collide(player.x, player.y, player.w, player.h, dart.x, dart.y, 8, 8) then
+        if rect_collide_margin(player.x, player.y, player.w, player.h, dart.x, dart.y, 8, 8,0) then
             damage_player()
             del(dart_projectiles, dart)  -- Remove the dart after collision
         end
