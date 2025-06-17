@@ -111,7 +111,8 @@ function update_traps()
                     dart_x = trap.x + 4 -- adjust dart position to center
                     dart_y = trap.y + 8 -- adjust dart position to center
                 end
-
+                local dx,dy = dart_x+4, dart_y+4
+                vfx_spawn_dust(dx, dy)
                 add(dart_projectiles, {
                     x = dart_x,
                     y = dart_y,
@@ -127,8 +128,10 @@ end
 -- update dart projectiles
 
 function update_darts()
-    for i = #dart_projectiles, 1, -1 do 
+    for i = #dart_projectiles, 1, -1 do
         local dart = dart_projectiles[i]
+
+        -- move
         if dart.direction == "left" then
             dart.x -= dart_speed
         elseif dart.direction == "right" then
@@ -139,12 +142,27 @@ function update_darts()
             dart.y += dart_speed
         end
 
-        -- remove dart if it goes off-screen or hits a wall
-        if dart.x < 0 or dart.x > 128 or dart.y < 0 or dart.y > 128 then
+        -- 1) world‐bounds cull
+        local world_px_w = world_width * 8
+        local world_px_h = world_height * 8
+        if dart.x < 0
+        or dart.x > world_px_w
+        or dart.y < 0
+        or dart.y > world_px_h then
             del(dart_projectiles, dart)
+        else
+            -- 2) wall‐collision cull
+            -- sample the tile you're inside now:
+            local tx = flr(dart.x / 8)
+            local ty = flr(dart.y / 8)
+            if fget(mget(tx, ty), wall_flag) then
+                vfx_spawn_burst(dart.x, dart.y)
+                del(dart_projectiles, dart)
+            end
         end
     end
 end
+
 
 -- draw traps
 function draw_traps()

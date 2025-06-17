@@ -4,6 +4,12 @@
 wall_flag = 0
 trap_flag = 1
 
+local WALK_LEFT_ID  = 41
+local WALK_RIGHT_ID = 40
+local WALK_INTERVAL = 12   -- frames between footsteps
+local WALK_CHAN     = 1    -- SFX channel (0–3)
+local WALK_VOL      = 6    -- 0–7
+
 player = {
     life = 3,
     max_life = 3,
@@ -26,7 +32,9 @@ player = {
     state = "idle",
     idle_timer = 0, 
     fade_progress = 0,           -- count how many frames player has been idle
-    dir = "right"              -- direction
+    dir = "right",              -- direction
+    step_timer      = WALK_INTERVAL,
+    next_step_left  = true,
 }
 
 -- update player state
@@ -64,9 +72,22 @@ function update_player()
 
     if moving then
         player.state = "moving"
-        player.idle_timer = 0  -- reset idle timer when moving
+        player.idle_timer = 0
         player.fade_progress = 0
         current_delay = player.frame_delay_moving
+
+        -- dust at foot, offset based on facing
+        local foot_x = player.x + (player.dir == "right" and 0 or player.w + 2)
+        local foot_y = player.y + player.h
+        vfx_spawn_dust(foot_x, foot_y)
+        -- footstep logic
+        player.step_timer -= 1
+        if player.step_timer <= 0 then
+            local id = player.next_step_left and WALK_LEFT_ID or WALK_RIGHT_ID
+            sfx(id, WALK_CHAN)
+            player.next_step_left = not player.next_step_left
+            player.step_timer = WALK_INTERVAL
+        end
     else
         player.state = "idle"
         player.idle_timer = player.idle_timer + 1
@@ -155,8 +176,16 @@ function update_camera()
     local region_y = flr(player.y / 128)
     local cam_x = region_x * 128
     local cam_y = region_y * 128
+
+    if shake_timer > 0 then
+      shake_timer -= 1
+      cam_x += flr(rnd(shake_timer/ SHAKE_DURATION * SHAKE_MAG * 2) - SHAKE_MAG)
+      cam_y += flr(rnd(shake_timer/ SHAKE_DURATION * SHAKE_MAG * 2) - SHAKE_MAG)
+    end
+
     camera(cam_x, cam_y)
 end
+
 
 -- Rectangle collision helper
 function rect_collide_margin(ax,ay,aw,ah,bx,by,bw,bh,margin)
@@ -168,15 +197,14 @@ function rect_collide_margin(ax,ay,aw,ah,bx,by,bw,bh,margin)
     )
 end
 
--- Reduce player life when damage is taken
 function damage_player()
-    if player.invincibility_timer > 0 then
-        return
-    end
-    player.life = player.life - 1
-    player.invincibility_timer = 30  -- Set invincibility timer (30 frames)
-    printh("Player damaged! Life: " .. player.life)
+    if player.invincibility_timer > 0 then return end
+    player.life -= 1
+    player.invincibility_timer = 30
+    shake_timer = SHAKE_DURATION
+    printh("Player damaged! Life: "..player.life)
 end
+
 
 -- Check collisions between the player and traps/dart projectiles.
 function check_trap_collisions()

@@ -1,14 +1,9 @@
 -- Room definitions (source coordinates in the reserved area)
 rooms = {
-    { id = 1, sx = 96,  sy = 0,   w = 7, h = 4 },
-    { id = 2, sx = 96,  sy = 8,   w = 6, h = 5 },
-    { id = 3, sx = 96,  sy = 18,  w = 6, h = 7 },
-    { id = 4, sx = 110, sy = 0,   w = 4, h = 5 },
-    { id = 5, sx = 108, sy = 8,   w = 5, h = 6 },
-    { id = 6, sx = 108, sy = 18,  w = 5, h = 7 },
-    { id = 7, sx = 116, sy = 0,   w = 6, h = 5 },
-    { id = 8, sx = 116, sy = 8,   w = 6, h = 6 },
-    { id = 9, sx = 116, sy = 18,  w = 6, h = 7 }
+    { id = 1, sx = 96,  sy = 0,   w = 6, h = 7 },
+    { id = 2, sx = 108,  sy = 0,   w = 6, h = 7 },
+    { id = 3, sx = 120, sy = 0 , w = 4 , h = 7},
+    { id = 4, sx = 96, sy = 14, w = 9, h = 7}
 }
 
 

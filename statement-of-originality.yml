@@ -11,18 +11,21 @@ declaration: >-
 # add as many "name+comment" entries as necessary
 # (or remove it altogether if you haven't collaborated with anyone)
 collaboration:
-  - name:
+  - name: Boboutanu Cristian
     comment: >-
+      He helped me a lot with the art of this project, as he remade the tiles of the dungeon
+      as well as some of the environment assets. The original tiles were made by me, but
+      they were not very good, so I asked him to remake them.
       
 
 # add as many "url+licence+comment" entries as necessary
 # (or remove it altogether if you haven't used any external code)
 code:
   - comment: platformer tutorial ( nerdy teachers )
-    url:
-    licence:
+    url: https://nerdyteachers.com/Explain/Platformer/
 
-  - comment : chat gpt
+  - comment : I have also used ChatGPT to help with some code snippets, especially for the generation part of the world.
+    url: https://chat.openai.com/
 
 
 # add as many "url+licence+comment" entries as necessary
@@ -31,3 +34,7 @@ assets:
   - comment:
     url:
     licence:
+
+music :
+  - comment : Music for my game
+    url: https://snabisch.itch.io/free-music-sequences-for-pico-8
