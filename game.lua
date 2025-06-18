@@ -1,5 +1,4 @@
 game_state = "playing"
-difficulty = 0.2 -- difficulty level for traps
 owner = {
     x = 0,
     y = 0,
@@ -148,14 +147,22 @@ function restart_game()
     player.idle_timer = 0
     player.fade_progress = 0
     player.invincibility_timer = 0
-    init_traps()
+    generate_world()  -- regenerate the world
+    local goal = placed_rooms[#placed_rooms]
+    owner.x = (goal.dest_x + flr(goal.cell_w/2)) * 8 - owner.w/2
+    owner.y = (goal.dest_y + flr(goal.cell_h/2)) * 8 - owner.h/2
+    --init_traps()
     timer = 0
-    -- reset player, traps, etc…
-    music(BGM_ROW,        -- start row
-            0,              -- fade length
-            0b1111,         -- all channels
-            BGM_ROW,        -- loop start
-            BGM_LEN)        -- loop length
+    music(-1)
+
+    -- then start your BGM fresh
+    music(
+        BGM_ROW,        -- start row
+        0,              -- fade length
+        0b1111,         -- all channels
+        BGM_ROW,        -- loop start
+        BGM_LEN         -- loop length
+    )
     played_win_music = false
 end
 

@@ -80,14 +80,6 @@ function update_player()
         local foot_x = player.x + (player.dir == "right" and 0 or player.w + 2)
         local foot_y = player.y + player.h
         vfx_spawn_dust(foot_x, foot_y)
-        -- footstep logic
-        player.step_timer -= 1
-        if player.step_timer <= 0 then
-            local id = player.next_step_left and WALK_LEFT_ID or WALK_RIGHT_ID
-            sfx(id, WALK_CHAN)
-            player.next_step_left = not player.next_step_left
-            player.step_timer = WALK_INTERVAL
-        end
     else
         player.state = "idle"
         player.idle_timer = player.idle_timer + 1
